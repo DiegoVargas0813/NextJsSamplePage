@@ -101,8 +101,124 @@ A way to do this is Promise.all() in js or Promise.allSettled()
 ### Static Rendering
 Data fetching and rendering happens on the server at build time (or deployment) and just once.
 Overall static rendering yields faster websites, reduces server load and improves Search Engine visibility.
+Also benefits SEO since web crawlers can easily index the content of the page.
+
+Static rendering is useful for UI with no data or data that is shared between users. Pages such as blog posts, marketing pages, documentation, etc.
+The opposite of a good place to use would be things like dashboards, user profiles, etc.
+
+### Dynamic Rendering
+Content is rendered on the server for each request:
+
+This allows for
+1. Real time data
+2. User specific content
+3. Request specific content like cookies, headers, etc.
+
+An important thing to note is that with dynamic rendering the application is only as fast as the slowest request, so if you have a lot of data fetching or a slow API it can lead to a bad user experience.
+
+### Streaming
+Streaming is a data transfer technique that allows breaking down a route into smaller "chunks" and progressively stream them to the client as the server gets them ready.
+
+This is useful to prevent slow data requests from blocking the entire page.
+
+React's component model and streaming are a good fit since components can be rendered and streamed independently.
+
+In Next this can be achieved with:
+1. At page level with loading.tsx components
+2. At component level with Suspense and React's streaming capabilities.
+
+Loading.tsx is a special file that creates a fallback UI to show instead of the page while the server is preparing the page to be sent to the client. This allows to show a loading state while the server is preparing the page.
+
+Static components of the page will still be shown during loading, and the dynamic components will be shown once they are ready. This is called interruptable navigation since the user can interact with the page while it's loading.
+
+#### Loading Skeletons
+A loading skeleton is a simplified version of the UI. Any UI added to loading.tsx will be shown as part of the static file.
+
+It is important to note loading skeleton is applied to all pages below the page that has the loading.tsx file. So if you have a loading.tsx file in the root of your pages folder, it will be applied to all pages in the application.
+
+This can be fixed with [Route Groups](https://nextjs.org/docs/app/api-reference/file-conventions/route-groups). These allow to organize files into logical groups without affecting path structure. The name in parenthesis is ignored in the URL structure, so you can have a loading skeleton for a specific group of pages.
+
+So insteado of /dashboard/(overview)/page.tsx you will have just /dashboard/page.tsx and the loading skeleton will only be applied to the pages in the overview group.
+
+The name overview is just an example, you can name the group whatever you want.
+
+#### Streaming a component
+Suspense allows to defer parts of an application until a condition is met. Dynamic components can be wrapped in Suspense and a fallback can be provided to show while the component is being loaded.
+
+Normally you need to have the actual fetch logic inside the component.
+
+#### Grouping Components
+To avoid a popping effect when the component is loaded, you can wrap the component in a div and apply styles to it. This way the component will take up space while it's loading and prevent layout shift.
+
+For example a Card components can be grouped using a wrapper component.
+
+Overall, it is a good idea to move data fetches down to the component level to take advantage of streaming , and then wrap the component in Suspense to show a loading state while the component is being loaded.
+
+## Search and Pagination
+
+Search with URL parameters has the following benefits:
+1. Bookmarkable and sharable URLs: Users can bookmark or share specific search results by sharing the URL, which includes the search query as a parameter.
+2. Server-side rendering: URL parameters can be consumed on the server to render the initial state, making easier to handle server rendering.
+3. Analytics and tracking: Easier client tracking without additional client side logic to track search queries.
+
+Hooks used:
+- useSearchParams: To read and modify the URL parameters.
+- usePathname: Allows reading the current URL's pathname.
+- useRouter: Enables navigation between routes within the client components programmatically.
+
+It is important to note that useSearchParams is a hook and thus used in client components. While searchParams can be read in server components, they cannot be modified. This is because server components are rendered on the server and do not have access to the browser's URL.
+
+### Debouncing Search Input
+Debouncing is a practice that limits the rate at which a function can fire. In the case of an input field it allows to delay the execution of a function until a certain amount of time has passed since the last time it was invoked. This is useful to prevent excessive API calls while the user is typing.
+
+How it works:
+- Trigger event: A timer begins once the trigger event occurs,  like typing in a search input field.
+- Wait: If a new event occurs before the timer expires, the timer is reset.
+- Execute: If the timer expires without any new events, the function is executed.
+
+Useful library 
+
+```console
+  pnpm i use-debounce
+```
+
+### Pagination
+Adding pagination to a page allows to split content into multiple pages, improving performance and user experience. It is especially useful when dealing with large datasets.
+
+## What are Hooks?
+
+[React Hooks](https://react.dev/reference/react/hooks)
+[Hook Examples](https://www.w3schools.com/react/react_hooks.asp)
+[Other explanations](https://www.reddit.com/r/react/comments/11ftu0p/what_are_hooks/)
+
+Hooks are functions that let you "hook" or add React features to functional components. They allow you to use state and other React features without writing a class component. They are normally simple functions that start with the word "use" and can be used to manage state, perform side effects, access context, and more.
+
+Some examples are:
+- useState: Allows you to add state to a functional component.
+- useEffect: Allows you to perform side effects in function components, such as fetching data, updating the DOM and timers. Essentially bring a functional component to life by allowing it to have state and lifecycle methods.
+- useContext: Allows you to access the context value from a parent component without having to pass it down through props.
+  - This one is specially useful for things like theme, user authentication, etc. where you want to share data across the entire application without having to pass it down through props.
+- useRef: Allows persistent values that survive re-renders without causing a re-render when they change. Commonly used to access DOM elements directly or to store mutable values that don't trigger a re-render when updated.
+
+TODO: Make more extensive list of hooks and their use cases.
+
+
+## Client and Server Components
+Client components are rendered on the client side and can use hooks, state, and other React features. They are useful for interactive components that require user input or need to manage state. Components like:
+- Forms: Components that require user input, such as a login form or a contact form,
+- Interactive UI: Components that require user interaction, such as a dropdown menu or a modal, can be rendered on the client to allow for interactivity and state management.
+- Real-time updates: Components that need to update in real-time, such as a chat application
+- User-specific content: Components that display user-specific content, such as a user profile or a dashboard, can be rendered on the client to allow for personalized experiences.
+
+Server components are rendered on the server side and cannot use hooks or state. They are useful for components that don't require interactivity and can be rendered on the server for better performance and SEO. Components like:
+- Static content: Components that display static content, such as a blog post or a product description, can be rendered on the server to improve performance and SEO.
+- Data fetching: Components that fetch data from an API can be rendered on the server to improve performance and reduce the amount of JavaScript sent to the client.
+- Layout components: Components that define the layout of a page, such as a header or footer, can be rendered on the server to improve performance and reduce the amount of JavaScript sent to the client.
+- Non-interactive UI: Components that don't require user interaction, such as a loading spinner or a placeholder, can be rendered on the server to improve performance and reduce the amount of JavaScript sent to the client.
+
+The basic question would be: Does the component require interactivity or state management? If yes, it should be a client component. If not, it can be a server component.
 
 ## Current Tut Page
 
 
-https://nextjs.org/learn/dashboard-app/static-and-dynamic-rendering
+https://nextjs.org/learn/dashboard-app/mutating-data
