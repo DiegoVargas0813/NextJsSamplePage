@@ -32,12 +32,24 @@ export async function createInvoice(formData: FormData) {
     });
     const amountInCents = amount * 100; // Convert dollars to cents for storage in the database
     const date = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+  
+    // The try block is used to catch any potential errors that may occur during DB operations.
+    try {
+      // SQL query to insert a new invoice.
+      await sql`
+          INSERT INTO invoices (customer_id, amount, status, date)
+          VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+      `;
+      // The catch block will log any errors to the console and return a message indicating that there was a database error.
+      } catch (error) {
+        console.error(error);
+        // The return statement provides feedback to the user that the invoice creation failed due to a database error.
+        return {
+          message: 'Database Error: Failed to Create Invoice.',
+        }
+    }
 
-    await sql`
-        INSERT INTO invoices (customer_id, amount, status, date)
-        VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
-    `;
-
+    // The redirect is called outside the try so that only try is succesful since error could also trigger redirect.
     revalidatePath('/dashboard/invoices'); // After the invoice is created, we call revalidatePath to refresh the invoices list page.
     redirect('/dashboard/invoices');
 }
@@ -55,18 +67,27 @@ export async function updateInvoice(id: string, formData: FormData) {
   });
  
   const amountInCents = amount * 100;
- 
-  await sql`
-    UPDATE invoices
-    SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
-    WHERE id = ${id}
+  
+  try{
+    await sql`
+      UPDATE invoices
+      SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+      WHERE id = ${id}
   `;
+  } catch (error){
+    console.log(error);
+    return { message: 'Database Error: Failed to Update Invoice.' };
+  }
+
  
   revalidatePath('/dashboard/invoices');
   redirect('/dashboard/invoices');
 }
 
 export async function deleteInvoice(id: string) {
+  // This line would show a complex error message to the user, while what we want is to gracefully move from them.
+  //throw new Error('Failed to Delete Invoice');
+  
   await sql`DELETE FROM invoices WHERE id = ${id}`;
   revalidatePath('/dashboard/invoices');
 }

@@ -251,7 +251,10 @@ A breadcrums is a navigational aid that is placed between a header and the site'
 
 They allow for a user to be aware of their location within a website. Thus, allowing a user to go back to previous pages without having to use the browser's back button. They also provide a way for users to quickly navigate to higher-level pages in the site's hierarchy.
 
+## Error Handling
+In Next.js you can create an error.tsx file that can be used to define a UI boundary for a route segment. It serves as a catch-all for unexpected errors and allows the display of a fallback UI. 
+
 ## Current Tut Page
 
 
-https://nextjs.org/learn/dashboard-app/error-handling
+https://nextjs.org/learn/dashboard-app/improving-accessibility
