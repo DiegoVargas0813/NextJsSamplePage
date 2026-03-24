@@ -7,10 +7,22 @@ import {
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { Button } from '@/app/ui/button';
+import { createInvoice } from '@/app/lib/actions';
 
+/*
+  The ({ customers }: { customers: CustomerField[] }) section does the following: 
+  - Expects a prop named customers, which is an array of CustomerField objects.
+  - The {customers} part inside the function body allows us to use the customers data directly in our JSX, such as when we map over it to create options in the select dropdown.
+  - The { customers: CustomerField[] } part is TypeScript syntax that defines the type of the customers prop, ensuring that it is an array of CustomerField objects. This helps with type checking and provides better developer experience when working with the form component.
+
+  In short terms this code defines "{customers}" as the required prop and leave it accessible in the form component.
+  The { customers: CustomerField[] } part is a TypeScript type annotation that specifies that the customers prop should be an array of CustomerField objects. This helps ensure that the data passed to the form component is of the expected type, providing better type safety and developer experience.
+
+  The [] indicates customers is a list (array) of CustomerField objects, meaning we can have multiple customers in that prop. 
+*/
 export default function Form({ customers }: { customers: CustomerField[] }) {
   return (
-    <form>
+    <form action={createInvoice}> {/* The form now calls the createInvoice action.*/}
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">

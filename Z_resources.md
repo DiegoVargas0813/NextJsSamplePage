@@ -218,7 +218,40 @@ Server components are rendered on the server side and cannot use hooks or state.
 
 The basic question would be: Does the component require interactivity or state management? If yes, it should be a client component. If not, it can be a server component.
 
+## Mutating Data
+
+### Server Actions
+React Server Actions allow to run asynchronous code on the server. Instead of having a client component that calls an API route, you can have asynchronous functions that execute on the server and can be called from client or server components. This allows to avoid the need for an API layer and can simplify the architecture of the application.
+
+These also have various security features like encrypted closures, input check and error message hashing.
+
+The action attribute in a form component can be used to invoke actions. This will return a [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData) object that can be used to get the values.
+
+Another benefit is that it allows a user to interact with form elements even if the JavaScript is still loading.
+
+### Type Validation and Coercion
+Type validation is the process of ensuring the data is being passed to a function is of the expected type. This can be done with libraries like [Zod](https://zod.dev/) or Yup.
+
+### Revalidating and redirecting
+Next.js has a client side router cache that store  the route segments in the users browser for a time.
+This cache ensures that users quickly navidate between routes while reducing requests to the server.
+
+revalidatePath helps clear the cache for a specific path, allowing users to see the updated data without having to refresh the page.
+
+### UUIDs or Auto-incrementing Keys
+UUIDs are unique identifiers that are generated using a combination of random numbers and the current timestamp. They are useful for ensuring uniqueness across distributed systems and can be generated on the client or server side.
+
+## [Dynamic Routes](https://nextjs.org/docs/app/api-reference/file-conventions/dynamic-routes)
+Dynamic routes are a way to create pages that handle dynamic content based on the URL.
+
+You create them by wrapping the page name in brackets. 
+
+## [Breadcrumbs](https://developer.mozilla.org/en-US/docs/Glossary/Breadcrumb)
+A breadcrums is a navigational aid that is placed between a header and the site's content, displaying the heirarchy of the current page in relation to the rest of the site. It allows users to easily navigate back to previous pages or sections of the site.
+
+They allow for a user to be aware of their location within a website. Thus, allowing a user to go back to previous pages without having to use the browser's back button. They also provide a way for users to quickly navigate to higher-level pages in the site's hierarchy.
+
 ## Current Tut Page
 
 
-https://nextjs.org/learn/dashboard-app/mutating-data
+https://nextjs.org/learn/dashboard-app/error-handling

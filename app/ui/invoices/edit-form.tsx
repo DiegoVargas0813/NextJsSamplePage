@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
+import { updateInvoice } from '@/app/lib/actions'; 
 
 export default function EditInvoiceForm({
   invoice,
@@ -17,8 +18,11 @@ export default function EditInvoiceForm({
   invoice: InvoiceForm;
   customers: CustomerField[];
 }) {
+  // The id cant be passed as an argument normally in the action function, so we use the bind method to create a new function with the id pre-filled as the first argument. This way, when the form is submitted, the updateInvoice function will receive the invoice id along with the form data.
+  const updateInvoiceWithId = updateInvoice.bind(null, invoice.id) 
+
   return (
-    <form>
+    <form action={updateInvoiceWithId}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">
