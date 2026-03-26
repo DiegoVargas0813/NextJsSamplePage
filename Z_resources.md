@@ -254,7 +254,20 @@ They allow for a user to be aware of their location within a website. Thus, allo
 ## Error Handling
 In Next.js you can create an error.tsx file that can be used to define a UI boundary for a route segment. It serves as a catch-all for unexpected errors and allows the display of a fallback UI. 
 
+# Improving Accessibility
+
+## Eslint Plugin
+Next.js ESlint plugin helps catch accessibility issues early. Images without alt text, use the aria-* and role attributes incorrectly and more.
+
+Three accessibility things that can be done are:
+1. Usage of semantic HTML: Using semantic HTML elements like <header>, <nav>, <main>, and <footer> can help screen readers understand the structure of the page and improve accessibility.
+2. Labellign: Including <label> and the htmlFor attribute ensures that each form field has descriptive text label.
+3. Focus outline: The fields show an outline when they are focused, this is important for keyboard navigation and accessibility.
+
+## Form Validation
+The simplest form of validation is using the required attribute to the input and select fields
+
 ## Current Tut Page
 
 
-https://nextjs.org/learn/dashboard-app/improving-accessibility
+https://nextjs.org/learn/dashboard-app/improving-accessibility#client-side-validation
